@@ -7,9 +7,11 @@ public class Launcher
         System.out.println(" Bienvenue ! Votre commande :");
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
-        if (!line.equals("quit"))
+        do
         {
             System.out.println(" Unknown Command ");
-        }
+            line = scanner.nextLine();
+
+        }while (!line.equals("quit"));
     }
 }
