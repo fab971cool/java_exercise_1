@@ -10,73 +10,35 @@ import java.util.stream.Stream;
 
 public class Launcher
 {
+
     public static void main(String[] args)
     {
-        System.out.println(" Bienvenue ! Que souhaitez-vous faire ? :");
-        Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
-        String tmp;
-        while (!line.equals("quit"))
+        List<Command> commandes = Arrays.asList(new Quit(), new Fibo(), new Freq());
+
+        Scanner scan = new Scanner(System.in);
+        String line = "";
+        Boolean faux = false;
+        int tmp = 0;
+        while(true)
         {
-
-
-            if (line.equals("fibo")) {
-                System.out.println(" Choisissez le nombre pour la suite de Fibonacci : ");
-                int n = scanner.nextInt();
-                tmp = scanner.nextLine();
-                int f0 = 0, f1 = 1, fn = -1;
-
-                int i = 2;
-                for (; i <= n; i++) {
-                    fn = f0 + f1;
-                    f0 = f1;
-                    f1 = fn;
-                }
-                System.out.println(fn);
-                break;
-            }
-            else if (line.equals("freq")){
-                System.out.println(" Ecrivez le chemin de votre fichier : ");
-                String fichier = scanner.next();
-                tmp = scanner.nextLine();
-
-                Path chemin = Paths.get(fichier);
-                try
+            System.out.println(" Write a command :  ");
+            line = scan.nextLine();
+            for ( Command commande : commandes )
+            {
+                if (commande.name().equals(line))
                 {
-                    String content = Files.readString(chemin);
-                    content = content.toLowerCase();
-                    content = content.replaceAll("[^a-z]+", " ");
-                    String[] words = content.split(" ");
-
-                    var count = Arrays.stream(words)
-                            .collect(Collectors.groupingBy(s->s, Collectors.counting())
-                    );
-
-                    Map<String, Long> finalMap = new LinkedHashMap<>();
-                    count.entrySet().stream()
-                            .sorted(Map.Entry.<String, Long>comparingByValue()
-                            .reversed()).forEachOrdered(e -> finalMap.put(e.getKey(), e.getValue()));
-
-                    // le keySet() ou ".map(Entry::getkey)", permettent de garder seulement les keys de finalMap sans leurs values
-                    var fin = finalMap.keySet().stream().limit(3);
-                    System.out.println(Arrays.toString(fin.toArray()));
-
-                }
-                catch (IOException e)
-                {
-                    System.out.println("Unreadable file: " +
-                            e.getClass().getSimpleName()+ " "+  e.getMessage());
-
+                    faux = commande.run(scan);
+                    if (faux) // si faux est vraie, on arrete le programme
+                        System.exit(0);
+                    tmp = 0;
                     break;
                 }
-                break;
+                tmp = 1;
+
             }
-            else {
+            if (tmp == 1) {
                 System.out.println(" Unknown Command ");
-                line = scanner.nextLine();
             }
-
-
         }
     }
 }
